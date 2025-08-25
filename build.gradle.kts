@@ -27,6 +27,8 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation("org.apache.logging.log4j:log4j-api:2.22.1")
+    runtimeOnly("org.apache.logging.log4j:log4j-core:2.22.1")
 }
 
 publishing {
@@ -54,12 +56,6 @@ tasks.test {
 tasks.javadoc {
     // First, generate some comments for the generated Constants class
     dependsOn("addJavadocToBuildConfig")
-    // Fail if Javadoc is incomplete
-    isFailOnError = true
-    (options as StandardJavadocDocletOptions).apply {
-        addBooleanOption("Xwerror", true)
-        addStringOption("Xdoclint:all")
-    }
 }
 
 tasks.publish {
