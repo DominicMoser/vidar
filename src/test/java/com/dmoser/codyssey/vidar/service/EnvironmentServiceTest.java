@@ -56,4 +56,25 @@ public class EnvironmentServiceTest {
         assertTrue(result);
     }
 
+
+    @Test
+    void test_isGitInstalled_notInstalled() {
+        EnvironmentService environmentService = new EnvironmentService(mockService);
+        when(mockService.executeCommand("git --version"))
+                .thenReturn(new CommandResult("", 127));
+
+        boolean result = environmentService.isGitInstalled();
+        assertFalse(result);
+    }
+
+    @Test
+    void test_isGitnstalled_installed() {
+        EnvironmentService environmentService = new EnvironmentService(mockService);
+        when(mockService.executeCommand("git --version"))
+                .thenReturn(new CommandResult("1.0.0", 0));
+
+        boolean result = environmentService.isGitInstalled();
+        assertTrue(result);
+    }
+
 }

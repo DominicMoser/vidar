@@ -9,6 +9,7 @@ import java.lang.module.ModuleDescriptor;
 public class EnvironmentService {
 
     private static final String LOG_WARN_DOCKER_NOT_INSTALLED = "Could not find docker command";
+    private static final String LOG_WARN_GIT_NOT_INSTALLED = "Could not find git command";
     private static final String LOG_WARN_DOCKER_COMPOSE_WRONG_VERSION = "Docker compose should have version {}, but has {}";
     private static final String LOG_INFO_ENVIRONMENT_VALID = "Environment check showed no problems. You're ready to go!";
 
@@ -43,8 +44,22 @@ public class EnvironmentService {
             log.warn(LOG_WARN_DOCKER_COMPOSE_WRONG_VERSION);
             return false;
         }
+
+        if (!isGitInstalled()) {
+            log.warn(LOG_WARN_DOCKER_COMPOSE_WRONG_VERSION);
+            return false;
+        }
         log.info(LOG_INFO_ENVIRONMENT_VALID);
         return true;
+    }
+
+    /**
+     * Checks if Git is installed by executing the `git --version` command.
+     *
+     * @return true fi git is installed and the command succeeds; false otherwise.
+     */
+    public boolean isGitInstalled() {
+        return isCommandInstalled(LOG_WARN_GIT_NOT_INSTALLED);
     }
 
     /**
