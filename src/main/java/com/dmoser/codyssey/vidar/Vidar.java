@@ -1,6 +1,6 @@
 package com.dmoser.codyssey.vidar;
 
-import com.dmoser.codyssey.vidar.service.Compose;
+import com.dmoser.codyssey.vidar.service.ComposeService;
 import com.dmoser.codyssey.vidar.service.EnvironmentService;
 import com.dmoser.codyssey.vidar.service.GitService;
 import com.dmoser.codyssey.vidar.service.SystemService;
@@ -23,21 +23,19 @@ public class Vidar {
     SystemService systemService;
     EnvironmentService environmentService;
     GitService gitService;
-    Compose compose;
+    ComposeService composeService;
 
     public Vidar(Path path) throws IOException {
-        systemService = new SystemService();
-        environmentService = new EnvironmentService(systemService);
-        gitService = new GitService(systemService);
-
         this.path = path;
+
+        systemService = SystemService.get();
+        environmentService = EnvironmentService.get();
+        gitService = GitService.get();
+        composeService = ComposeService.get(path.toRealPath().toString());
 
         if (!environmentService.validateEnvironment()) {
             log.warn(LOG_WARN_SYSTEM_DEPENDENCIES_NOT_MET);
         }
-
-        // TODO Check for docker compose in directory
-        compose = new Compose(path.toRealPath().toString(), systemService, environmentService);
     }
 
     public String add(String gitClonePath) {
@@ -104,36 +102,41 @@ public class Vidar {
 
     public void start(String pluginName) {
         String pluginPath = "apps/" + pluginName;
-        compose.child(pluginPath)
+        composeService.child(pluginPath)
                 .ls()
-                .forEach(compose::up);
+                .forEach(composeService::up);
     }
 
     public void stop(String pluginName) {
         String pluginPath = "apps/" + pluginName;
-        compose.child(pluginPath)
+        composeService.child(pluginPath)
                 .ls()
-                .forEach(compose::down);
+                .forEach(composeService::down);
     }
 
     public String state(String pluginName) {
         String pluginPath = "apps/" + pluginName;
-        return compose.child(pluginPath)
+        return composeService.child(pluginPath)
                 .ls()
                 .stream()
-                .map(service -> service + ":" + compose.state(service))
+                .map(service -> service + ":" + composeService.state(service))
                 .collect(Collectors.joining(",", "{", "}"));
     }
 
-    // Prints all needed variables
+    /**
+     * create a map containing all variables used by this plugin. Variables, that are not initialized will have empty values.
+     *
+     * @param pluginName
+     * @return
+     */
     public Map<String, String> variableInfo(String pluginName) {
+        String pluginPath = "apps/" + pluginName;
         Map<String, String> varMap = new HashMap<>();
-        try {
-            Compose c = new Compose(path.resolve("apps").resolve(pluginName).toRealPath().toString());
-            // add all needed variables
-            c.getVariables().forEach(var -> varMap.put(var, ""));
-        } catch (IOException e) {
-        }
+
+        composeService.child(pluginPath)
+                .getVariables()
+                .forEach(variable -> varMap.put(variable, ""));
+
 
         // Add values from the environment.
         systemService.getEnv().forEach(e -> {
@@ -144,7 +147,7 @@ public class Vidar {
         });
 
         // Add value to variable when exist in .env file.
-        compose.getEnv().forEach(e -> {
+        composeService.getEnv().forEach(e -> {
             if (!varMap.containsKey(e.getKey())) {
                 return;
             }
@@ -160,7 +163,7 @@ public class Vidar {
      * @param value The value of the variable
      */
     public void variableSet(String key, String value) {
-        compose.setEnv(key, value);
+        composeService.setEnv(key, value);
     }
 
     /**

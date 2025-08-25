@@ -25,8 +25,12 @@ public class GitService {
 
     final SystemService systemService;
 
-    public GitService(SystemService systemService) {
+    GitService(SystemService systemService) {
         this.systemService = systemService;
+    }
+
+    public static GitService get() {
+        return new GitService(SystemService.get());
     }
 
     public String extractRepoName(String url) {

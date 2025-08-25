@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Compose {
+public class ComposeService {
 
     private static final String DOCKER_COMPOSE_LS_COMMAND = "docker compose --file %s config --services --no-interpolate";
     private static final String DOCKER_COMPOSE_UP_ALL_COMMAND = "docker compose --file %s up";
@@ -26,24 +26,19 @@ public class Compose {
     EnvironmentService environmentService;
 
     /**
-     * Create a new Compose class with the default SystemService and EnvironmentService
-     */
-    public Compose(String path) {
-        this.path = path;
-        this.systemService = SystemService.get();
-        this.environmentService = EnvironmentService.get();
-    }
-
-    /**
      * Constructor for testcases, so that SystemService and EnvironmentService can be mocked.
      *
      * @param systemService      The SystemService of this Compose class
      * @param environmentService The EnvironmentService of this Compose class.
      */
-    public Compose(String path, SystemService systemService, EnvironmentService environmentService) {
+    public ComposeService(String path, SystemService systemService, EnvironmentService environmentService) {
         this.path = path;
         this.systemService = systemService;
         this.environmentService = environmentService;
+    }
+
+    public static ComposeService get(String path) {
+        return new ComposeService(path, SystemService.get(), EnvironmentService.get());
     }
 
     /**
@@ -170,8 +165,8 @@ public class Compose {
      * @param childPath
      * @return
      */
-    public Compose child(String childPath) {
-        return new Compose(this.path + "/" + path, this.systemService, this.environmentService);
+    public ComposeService child(String childPath) {
+        return new ComposeService(this.path + "/" + path, this.systemService, this.environmentService);
     }
 
 }

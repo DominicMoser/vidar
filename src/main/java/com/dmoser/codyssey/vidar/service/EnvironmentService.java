@@ -19,16 +19,13 @@ public class EnvironmentService {
     private final SystemService systemService;
     Logger log = LogManager.getLogger(EnvironmentService.class);
 
-    public EnvironmentService() {
-        this.systemService = SystemService.get();
-    }
 
     public EnvironmentService(SystemService systemService) {
         this.systemService = systemService;
     }
 
     public static EnvironmentService get() {
-        return new EnvironmentService();
+        return new EnvironmentService(SystemService.get());
     }
 
     /**
