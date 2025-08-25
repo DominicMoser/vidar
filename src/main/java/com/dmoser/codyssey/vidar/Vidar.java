@@ -1,6 +1,6 @@
 package com.dmoser.codyssey.vidar;
 
-import com.dmoser.codyssey.vidar.compose.Compose;
+import com.dmoser.codyssey.vidar.service.Compose;
 import com.dmoser.codyssey.vidar.service.EnvironmentService;
 import com.dmoser.codyssey.vidar.service.GitService;
 import com.dmoser.codyssey.vidar.service.SystemService;

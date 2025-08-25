@@ -1,6 +1,7 @@
 package com.dmoser.codyssey.vidar.compose;
 
 import com.dmoser.codyssey.vidar.service.CommandResult;
+import com.dmoser.codyssey.vidar.service.Compose;
 import com.dmoser.codyssey.vidar.service.EnvironmentService;
 import com.dmoser.codyssey.vidar.service.SystemService;
 import org.junit.jupiter.api.Assertions;

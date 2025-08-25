@@ -1,7 +1,4 @@
-package com.dmoser.codyssey.vidar.compose;
-
-import com.dmoser.codyssey.vidar.service.EnvironmentService;
-import com.dmoser.codyssey.vidar.service.SystemService;
+package com.dmoser.codyssey.vidar.service;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
