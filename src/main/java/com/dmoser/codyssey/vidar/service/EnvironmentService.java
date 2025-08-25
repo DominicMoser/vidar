@@ -14,6 +14,7 @@ public class EnvironmentService {
     private static final String LOG_INFO_ENVIRONMENT_VALID = "Environment check showed no problems. You're ready to go!";
 
     private static final String DOCKER_TEST_COMMAND = "docker --version";
+    private static final String GIT_TEST_COMMAND = "git --version";
     private static final String DOCKER_COMPOSE_TEST_COMMAND = "docker compose version --short";
     private final SystemService systemService;
     Logger log = LogManager.getLogger(EnvironmentService.class);
@@ -59,7 +60,7 @@ public class EnvironmentService {
      * @return true fi git is installed and the command succeeds; false otherwise.
      */
     public boolean isGitInstalled() {
-        return isCommandInstalled(LOG_WARN_GIT_NOT_INSTALLED);
+        return isCommandInstalled(GIT_TEST_COMMAND);
     }
 
     /**

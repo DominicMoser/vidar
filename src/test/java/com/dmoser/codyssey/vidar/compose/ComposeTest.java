@@ -22,7 +22,7 @@ public class ComposeTest {
     @Test
     void test_ls_noService() {
         Compose compose = new Compose("./", systemService, new EnvironmentService(systemService));
-        when(systemService.executeCommand("docker compose --project-directory ./ config --services")).thenReturn(new CommandResult("", 0));
+        when(systemService.executeCommand("docker compose --file .//docker-compose.yml config --services --no-interpolate")).thenReturn(new CommandResult("", 0));
 
         Set<String> result = compose.ls();
         Assertions.assertEquals(0, result.size());
@@ -31,7 +31,7 @@ public class ComposeTest {
     @Test
     void test_ls_MultipleServices() {
         Compose compose = new Compose("./", systemService, new EnvironmentService(systemService));
-        when(systemService.executeCommand("docker compose --project-directory ./ config --services"))
+        when(systemService.executeCommand("docker compose --file .//docker-compose.yml config --services --no-interpolate"))
                 .thenReturn(new CommandResult("service1\nservice2", 0));
 
         Set<String> result = compose.ls();

@@ -6,12 +6,21 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SystemService {
 
     private static final String LOG_DEBUG_COMMAND_EXIT_CODE_NOT_0 = "Command {} did exit with code {}. ErrorOutput is {}";
     private static final String LOG_DEBUG_COMMAND_THREW_EXCEPTION = "Command {} did throw an exception. ErrorOutput is {}";
+
+
+    private static final String LS_COMMAND = "ls -1 %s";
+    private static final String RM_COMMAND = "rm -r %s";
 
     Logger log = LogManager.getLogger(SystemService.class);
 
@@ -60,4 +69,29 @@ public class SystemService {
             return new CommandResult("", 4);
         }
     }
+
+    // Lists all folders in directory
+    public Set<String> ls(String path) {
+        String execString = String.format(LS_COMMAND, path);
+        var result = executeCommand(execString)
+                .content()
+                .split("\n");
+        return Stream.of(result).filter(s -> !s.isBlank()).collect(Collectors.toSet());
+    }
+
+    public void rm(Path path) {
+        try {
+            String execString = String.format(RM_COMMAND, path.toRealPath());
+            executeCommand(execString);
+        } catch (NoSuchFileException e) {
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Set<Map.Entry<String, String>> getEnv() {
+        return System.getenv().entrySet();
+    }
+
+
 }
