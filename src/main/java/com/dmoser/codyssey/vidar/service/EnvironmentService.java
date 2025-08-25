@@ -21,7 +21,7 @@ public class EnvironmentService {
         this.systemService = SystemService.get();
     }
 
-    EnvironmentService(SystemService systemService) {
+    public EnvironmentService(SystemService systemService) {
         this.systemService = systemService;
     }
 
